@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elegant Date Picker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 5px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 500px;
+            width: 100%;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .title {
+            text-align: center;
+            font-size: 2.2em;
+            font-weight: 300;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #64b5f6, #42a5f5, #1976d2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .date-picker {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-label {
+            font-size: 0.9em;
+            color: #b0b0b0;
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .select-input {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            padding: 15px;
+            color: #ffffff;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .select-input:hover {
+            border-color: rgba(100, 181, 246, 0.5);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .select-input:focus {
+            border-color: #64b5f6;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 20px rgba(100, 181, 246, 0.3);
+        }
+
+        .select-input option {
+            background: #1a1a2e;
+            color: #ffffff;
+            padding: 10px;
+        }
+
+        .result {
+            text-align: center;
+            font-size: 1.3em;
+            padding: 20px;
+            background: rgba(100, 181, 246, 0.1);
+            border-radius: 5px;
+            border: 1px solid rgba(100, 181, 246, 0.3);
+            margin-top: 20px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .result.show {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(100, 181, 246, 0.2);
+        }
+
+        .reset-btn {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            width: 100%;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(244, 67, 54, 0.3);
+        }
+
+        .reset-btn:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 600px) {
+            .date-picker {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .container {
+                padding: 25px;
+                margin: 20px;
+            }
+            
+            .title {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Pilih Tanggal</h1>
+        <div class="date-picker">
+            <div class="input-group">
+                <label class="input-label">Tanggal</label>
+                <select id="day" class="select-input">
+                    <option value="">Pilih</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label class="input-label">Bulan</label>
+                <select id="month" class="select-input">
+                    <option value="">Pilih Bulan</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label class="input-label">Tahun</label>
+                <select id="year" class="select-input">
+                    <option value="">Pilih</option>
+                </select>
+            </div>
+        </div>
+        <div id="result" class="result">
+            Silakan pilih tanggal, bulan, dan tahun
+        </div>
+        <button id="resetBtn" class="reset-btn">Reset Pilihan</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            const months = [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            ];
+            
+            // Populate day options (1-31)
+            for (let day = 1; day <= 31; day++) {
+                $('#day').append($('<option>', {
+                    value: day,
+                    text: day
+                }));
+            }
+            
+            // Populate month options
+            $.each(months, function(index, month) {
+                $('#month').append($('<option>', {
+                    value: index + 1,
+                    text: month
+                }));
+            });
+            
+            // Populate year options (1990-2025)
+            for (let year = 2025; year >= 1990; year--) {
+                $('#year').append($('<option>', {
+                    value: year,
+                    text: year
+                }));
+            }
+            
+            // Update result function with debounce
+            let updateTimeout;
+            function updateResult() {
+                clearTimeout(updateTimeout);
+                updateTimeout = setTimeout(() => {
+                    const day = $('#day').val();
+                    const monthIndex = $('#month').val();
+                    const year = $('#year').val();
+                    
+                    if (day && monthIndex && year) {
+                        const monthName = months[monthIndex - 1];
+                        const formattedDate = `${day} ${monthName} ${year}`;
+                        
+                        // Validate date using jQuery
+                        const date = new Date(year, monthIndex - 1, day);
+                        const isValidDate = date.getDate() == day && 
+                                           date.getMonth() == monthIndex - 1 && 
+                                           date.getFullYear() == year;
+                        
+                        if (isValidDate) {
+                            $('#result').html(`
+                                <div style="animation: slideIn 0.5s ease-out;">
+                                    <strong>Tanggal yang dipilih:</strong><br>
+                                    ${formattedDate}
+                                </div>
+                            `).addClass('show');
+                        } else {
+                            $('#result').html(`
+                                <div style="color: #f44336; animation: shake 0.5s ease-out;">
+                                    ⚠️ Tanggal tidak valid!
+                                </div>
+                            `).removeClass('show');
+                        }
+                    } else {
+                        $('#result').text('Silakan pilih tanggal, bulan, dan tahun')
+                                   .removeClass('show');
+                    }
+                }, 200);
+            }
+            
+            // Event listeners using jQuery
+            $('#day, #month, #year').on('change', updateResult);
+            
+            // Reset button functionality
+            $('#resetBtn').on('click', function() {
+                $('#day, #month, #year').val('');
+                $('#result').text('Silakan pilih tanggal, bulan, dan tahun')
+                           .removeClass('show');
+                
+                // Add reset animation with jQuery
+                $('.container').css('animation', 'none');
+                setTimeout(() => {
+                    $('.container').css('animation', 'fadeInUp 0.5s ease-out');
+                }, 10);
+            });
+            
+            // Add hover effects using jQuery
+            $('.select-input').hover(
+                function() {
+                    $(this).css('transform', 'translateY(-2px)');
+                },
+                function() {
+                    $(this).css('transform', 'translateY(0)');
+                }
+            );
+            
+            // Add focus effects
+            $('.select-input').on('focus', function() {
+                $(this).parent().find('.input-label').css({
+                    'color': '#64b5f6',
+                    'transform': 'scale(1.05)'
+                });
+            }).on('blur', function() {
+                $(this).parent().find('.input-label').css({
+                    'color': '#b0b0b0',
+                    'transform': 'scale(1)'
+                });
+            });
+        });
+        
+        // Add CSS animations using jQuery
+        $('<style>').text(`
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-5px); }
+                75% { transform: translateX(5px); }
+            }
+            
+            .input-label {
+                transition: all 0.3s ease;
+            }
+            
+            .select-input {
+                transition: all 0.3s ease;
+            }
+        `).appendTo('head');
+    </script>
+</body>
+</html>
