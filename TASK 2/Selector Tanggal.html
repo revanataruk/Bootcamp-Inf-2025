@@ -268,23 +268,19 @@
                 }, 200);
             }
             
-            // Event listeners using jQuery
             $('#day, #month, #year').on('change', updateResult);
             
-            // Reset button functionality
             $('#resetBtn').on('click', function() {
                 $('#day, #month, #year').val('');
                 $('#result').text('Silakan pilih tanggal, bulan, dan tahun')
                            .removeClass('show');
                 
-                // Add reset animation with jQuery
                 $('.container').css('animation', 'none');
                 setTimeout(() => {
                     $('.container').css('animation', 'fadeInUp 0.5s ease-out');
                 }, 10);
             });
             
-            // Add hover effects using jQuery
             $('.select-input').hover(
                 function() {
                     $(this).css('transform', 'translateY(-2px)');
@@ -294,7 +290,6 @@
                 }
             );
             
-            // Add focus effects
             $('.select-input').on('focus', function() {
                 $(this).parent().find('.input-label').css({
                     'color': '#64b5f6',
@@ -308,7 +303,6 @@
             });
         });
         
-        // Add CSS animations using jQuery
         $('<style>').text(`
             @keyframes slideIn {
                 from {
